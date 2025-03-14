@@ -33,7 +33,8 @@ void disassember(std::vector<uint8_t> hex_data, int pc)
 	uint8_t firstnib = (hex_value >> 4);
 	std::cout << std::format("\n{:#06x}  {:#04x}  {:#04x}", (pc), hex_value, hex_data[pc+1]);
 	std::cout << "\nFirst Nibble: " << std::format("{:#01x}\n", firstnib);
-	/*switch (firstnib)
+
+	switch (firstnib)
 	{
 	case 0x00: std::cout << "\nclear the display"; break;
 	case 0x01: std::cout << "\nN/A "; break;
@@ -56,12 +57,13 @@ void disassember(std::vector<uint8_t> hex_data, int pc)
 	case 0x12: std::cout << "\nN/A "; break;
 	case 0x13: std::cout << "\nN/A "; break;
 	case 0x14: std::cout << "\nN/A "; break;
-	}*/
+	}
 
 }
 
 void traverse_rom(std::vector<uint8_t> hex_data)
 {
+	// FIXME: only for debug. normally, i should start from 0.
 	//int i = 0;
 	int i = 2;
 	while (i < hex_data.size())
