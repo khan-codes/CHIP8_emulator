@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (CHIP8_emulator   "main.cpp" "utility.h" "utility.cpp")
+add_executable (CHIP8_emulator   "main.cpp" "utility.h" "utility.cpp" "system.h" "system.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET CHIP8_emulator PROPERTY CXX_STANDARD 20)

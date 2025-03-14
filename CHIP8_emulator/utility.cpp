@@ -84,14 +84,45 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	{
 		// 6XNN	Store number NN in register VX
 		// Pseudo: 
-		// registers[secondnib] = hex_data[pc+1]
+		// registers[secondnib] = hex_data[pc+1];
 		break;
 	}
-	case 0x07: std::cout << "\nN/A "; break;
-	case 0x08: std::cout << "\nN/A "; break;
-	case 0x09: std::cout << "\nN/A "; break;
-	case 0x0a: std::cout << "\nN/A "; break;
-	case 0x0b: std::cout << "\nN/A "; break;
+	case 0x07: 
+	{
+		//7XNN:	Add the value NN to register VX
+		// Pseudo:
+		// registers[secondnib] += hex_data[pc+1]; 
+		break;
+	}
+	case 0x08: 
+	{
+		// 8 subinstructions here
+		break;
+	}
+	case 0x09: 
+	{
+		// 9XY0: Skip the following instruction if the value of register VX is not equal to the value of register VY
+		uint8_t register_x{};  // get the values of the resgister using the second nibble
+		uint8_t register_y{};
+		if (register_x != register_y)
+			pc += 2;
+		break;
+	}
+	case 0x0a: 
+	{
+		// ANNN: Store memory address NNN in register I
+		// I is a special register, that is 2 bytes long (unlike the rest which are 1 byte long). It is used for memory (read & write) operations
+		uint16_t register_i = ((hex_value << 4) << 8) | (hex_data[pc + 1] << 4);
+		// TODO: assign this value to the actual register I
+		break;
+	}
+	case 0x0b: 
+	{
+		// BNNN: Jump to address NNN + V0
+		uint16_t nnn = ((hex_value << 4) << 8) | (hex_data[pc + 1] << 4);
+		
+		break;
+	}
 	case 0x0c: std::cout << "\nN/A "; break;
 	case 0x0d: std::cout << "\nN/A "; break;
 	case 0x0e: std::cout << "\nN/A "; break;
