@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <cstdlib>
+#include <random>
 #include "utility.h"
 
 std::vector<uint8_t> read_hex_file(const char* filepath)
@@ -178,8 +178,10 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	{
 		// FIXME: the typical range of the generated number is between 0 and 255. enforce it.
 		// CXNN: Set VX to a random number with a mask of NN
-		srand(101);
-		uint8_t register_x{static_cast<uint8_t>(rand()) & hex_data[pc+1]};
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<uint8_t> distrib(0, 255);
+		uint8_t register_x = static_cast<uint8_t>(distrib(gen)) & hex_data[pc+1];
 		// registers[secondnib] = register_x;
 		break;
 	}
@@ -279,7 +281,7 @@ void traverse_rom(std::vector<uint8_t>& hex_data)
 	{
 		disassember(hex_data, i);
 		i += 2;
-		//if (i > 10)
+		if (i > 20)
 			break;
 	}
 }

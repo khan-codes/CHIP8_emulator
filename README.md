@@ -11,3 +11,4 @@ CMake
 Raylib
 
 # Demo
+TODO: Put a demo GIF here
