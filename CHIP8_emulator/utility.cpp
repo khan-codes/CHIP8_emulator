@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
 #include "utility.h"
 
 std::vector<uint8_t> read_hex_file(const char* filepath)
@@ -31,6 +32,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	//pc -= 0x200;
 	uint8_t hex_value = hex_data[pc];
 	uint8_t firstnib = (hex_value >> 4);
+	uint8_t secondnib = (hex_value << 4);
 	std::cout << std::format("\n{:#06x}  {:#04x}  {:#04x}", (pc), hex_value, hex_data[pc+1]);
 	std::cout << "\nFirst Nibble: " << std::format("{:#01x}\n", firstnib);
 
@@ -96,7 +98,55 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	}
 	case 0x08: 
 	{
-		// 8 subinstructions here
+		uint8_t next_secondnib = hex_data[pc + 1] << 4;
+		switch (next_secondnib)
+		{
+		case 0x00:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		}
+		case 0x01:
+		{
+			// 8XY1: Set VX to VX OR VY
+			break;
+		}
+		case 0x02:
+		{
+			// 8XY2: Set VX to VX AND VY
+			break;
+		}
+		case 0x03:
+		{
+			// 8XY3: Set VX to VX XOR VY
+			break;
+		}
+		case 0x04:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		}
+		case 0x05:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		}
+		case 0x06:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		}
+		case 0x07:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		} 
+		case 0x0e:
+		{
+			// 8XY0: Store the value of register VY in register VX
+			break;
+		}
+		}
 		break;
 	}
 	case 0x09: 
@@ -120,20 +170,104 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	{
 		// BNNN: Jump to address NNN + V0
 		uint16_t nnn = ((hex_value << 4) << 8) | (hex_data[pc + 1] << 4);
-		
+		// Pseudo:
+		// pc = nnn + resgisters[0]
 		break;
 	}
-	case 0x0c: std::cout << "\nN/A "; break;
-	case 0x0d: std::cout << "\nN/A "; break;
-	case 0x0e: std::cout << "\nN/A "; break;
-	case 0x0f: std::cout << "\nN/A "; break;
-	case 0x10: std::cout << "\nN/A "; break;
-	case 0x11: std::cout << "\nN/A "; break;
-	case 0x12: std::cout << "\nN/A "; break;
-	case 0x13: std::cout << "\nN/A "; break;
-	case 0x14: std::cout << "\nN/A "; break;
+	case 0x0c: 
+	{
+		// FIXME: the typical range of the generated number is between 0 and 255. enforce it.
+		// CXNN: Set VX to a random number with a mask of NN
+		srand(101);
+		uint8_t register_x{static_cast<uint8_t>(rand()) & hex_data[pc+1]};
+		// registers[secondnib] = register_x;
+		break;
 	}
-
+	case 0x0d: 
+	{
+		// this one is a drawing command
+		break;
+	}
+	case 0x0e: 
+	{
+		switch (hex_data[pc + 1])
+		{
+		case 0x9e:
+		{
+			// Pseudo:
+			// if (key() == registers[secondnib]) pc += 2;
+			break;
+		}
+		case 0xa1:
+		{
+			// Pseudo:
+			// if (key() != registers[secondnib]) pc += 2;
+			break;
+		}
+		}
+		break;
+	}
+	case 0x0f: 
+	{
+		switch (hex_data[pc + 1])
+		{
+		case 0x07:
+		{
+			// FX07: Store the current value of the delay timer in register VX
+			break;
+		}
+		case 0x0a:
+		{
+			// FX0A: Wait for a keypress and store the result in register VX
+			// Psuedo:
+			// registersp[secondnib] = get_key();
+			break;
+		}
+		case 0x15:
+		{
+			// FX15: Set the delay timer to the value of register VX
+			// Psuedo:
+			// delay_time = registers[secondnib]; 
+			break;
+		}
+		case 0x18:
+		{
+			// FX18: Set the sound timer to the value of register VX
+			// Psuedo:
+			// delay_time = registers[secondnib]; 
+			break;
+		}
+		case 0x1e:
+		{
+			// FX1E: Add the value stored in register VX to register I
+			// Pseudo: 
+			// register_i += registers[secondnib];
+			break;
+		}
+		case 0x29:
+		{
+			// FX29: Set I to the memory address of the sprite data corresponding to the hexadecimal digit stored in register VX
+			break;
+		}
+		case 0x33:
+		{
+			// FX33: Store the binary-coded decimal equivalent of the value stored in register VX at addresses I, I + 1, and I + 2
+			break;
+		}
+		case 0x55:
+		{
+			// FX55: Store the values of registers V0 to VX inclusive in memory starting at address I; I is set to I + X + 1 after operation²
+			break;
+		}
+		case 0x65:
+		{
+			// FX65	Fill registers V0 to VX inclusive with the values stored in memory starting at address I; I is set to I + X + 1 after operation²
+			break;
+		}
+		}
+		break;
+	}
+	}
 }
 
 void traverse_rom(std::vector<uint8_t>& hex_data)
