@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <bitset>
 #include "utility.h"
 
 int main()

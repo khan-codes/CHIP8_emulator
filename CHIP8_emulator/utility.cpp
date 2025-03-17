@@ -134,7 +134,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		{
 			// 8XY4	Add the value of register VY to register VX; Set VF to 01 if a carry occurs; Set VF to 00 if a carry does not occur
 			// int sum = registers[secondnib] + registers[next_firstnib];
-			// if (sum < registers[secondnib] | sum < registers[next_firstnib]) registers[0x0f] = 0x01;
+			// if (!(sum < registers[secondnib] | sum < registers[next_firstnib])) registers[0x0f] = 0x01;
 			std::cout << std::format("\n8{:#03x}{:#03x}4", secondnib, next_firstnib);
 			break;
 		}
@@ -142,7 +142,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		{
 			// 8XY5	Subtract the value of register VY from register VX; Set VF to 00 if a borrow occurs; Set VF to 01 if a borrow does not occur
 			// int sum = registers[secondnib] - registers[next_firstnib];
-			// if (sum > registers[secondnib] | sum > registers[next_firstnib]) registers[0x0f] = 0x01;
+			// if (!(sum > registers[secondnib] | sum > registers[next_firstnib])) registers[0x0f] = 0x01;
 			std::cout << std::format("\n8{:#03x}{:#03x}5", secondnib, next_firstnib);
 			break;
 		}
@@ -157,12 +157,18 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		}
 		case 0x07:
 		{
-			// 8XY0: Store the value of register VY in register VX
+			// 8XY7: Set register VX to the value of VY minus VX; Set VF to 00 if a borrow occurs; Set VF to 01 if a borrow does not occur
+			// int sum =  registers[next_firstnib] - registers[secondnib];
+			// if (!(sum > registers[secondnib] | sum > registers[next_firstnib])) registers[0x0f] = 0x01;
+			std::cout << std::format("\n8{:#03x}{:#03x}7", secondnib, next_firstnib);
 			break;
 		} 
 		case 0x0e:
 		{
-			// 8XY0: Store the value of register VY in register VX
+			// 8XYE: Store the value of register VY shifted left one bit in register VX; Set register VF to the most significant bit prior to the shift; VY is unchanged
+			// registers[0x0f] = registers[next_firstnib] & 0x80; // since 0x80 in binary is 10000000;
+			// registers[secondnib] = (registers[next_firstnib] << 1);
+			std::cout << std::format("\n8{:#03x}{:#03x}6", secondnib, next_firstnib);
 			break;
 		}
 		}
@@ -199,7 +205,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		// CXNN: Set VX to a random number with a mask of NN
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<uint8_t> distrib(0, 255);
+		std::uniform_int_distribution<short> distrib(0, 255);
 		uint8_t register_x = static_cast<uint8_t>(distrib(gen)) & hex_data[pc+1];
 		// registers[secondnib] = register_x;
 		break;
