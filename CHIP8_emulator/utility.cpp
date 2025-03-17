@@ -98,42 +98,61 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	}
 	case 0x08: 
 	{
+		uint8_t next_firstnib = hex_data[pc + 1] >> 4;
 		uint8_t next_secondnib = hex_data[pc + 1] << 4;
 		switch (next_secondnib)
 		{
 		case 0x00:
 		{
 			// 8XY0: Store the value of register VY in register VX
+			// registers[secondnib] = registers[next_firstnib];
+			std::cout << std::format("\n8{:#03x}{:#03x}0", secondnib, next_firstnib);
 			break;
 		}
 		case 0x01:
 		{
 			// 8XY1: Set VX to VX OR VY
+			// registers[secondnib] = registers[secondnib] | registers[next_firstnib];
+			std::cout << std::format("\n8{:#03x}{:#03x}1", secondnib, next_firstnib);
 			break;
 		}
 		case 0x02:
 		{
 			// 8XY2: Set VX to VX AND VY
+			// registers[secondnib] = registers[secondnib] & registers[next_firstnib];
+			std::cout << std::format("\n8{:#03x}{:#03x}2", secondnib, next_firstnib);
 			break;
 		}
 		case 0x03:
 		{
 			// 8XY3: Set VX to VX XOR VY
+			// registers[secondnib] = registers[secondnib] ^ registers[next_firstnib];
+			std::cout << std::format("\n8{:#03x}{:#03x}3", secondnib, next_firstnib);
 			break;
 		}
 		case 0x04:
 		{
-			// 8XY0: Store the value of register VY in register VX
+			// 8XY4	Add the value of register VY to register VX; Set VF to 01 if a carry occurs; Set VF to 00 if a carry does not occur
+			// int sum = registers[secondnib] + registers[next_firstnib];
+			// if (sum < registers[secondnib] | sum < registers[next_firstnib]) registers[0x0f] = 0x01;
+			std::cout << std::format("\n8{:#03x}{:#03x}4", secondnib, next_firstnib);
 			break;
 		}
 		case 0x05:
 		{
-			// 8XY0: Store the value of register VY in register VX
+			// 8XY5	Subtract the value of register VY from register VX; Set VF to 00 if a borrow occurs; Set VF to 01 if a borrow does not occur
+			// int sum = registers[secondnib] - registers[next_firstnib];
+			// if (sum > registers[secondnib] | sum > registers[next_firstnib]) registers[0x0f] = 0x01;
+			std::cout << std::format("\n8{:#03x}{:#03x}5", secondnib, next_firstnib);
 			break;
 		}
 		case 0x06:
 		{
-			// 8XY0: Store the value of register VY in register VX
+			// 8XY6	Store the value of register VY shifted right one bit in register VX; Set register VF to the least significant bit prior to the shift; VY is unchanged
+			// registers[0x0f] = registers[next_firstnib] % 2; // the LSB is 1 only when the number is even; otherwise it is odd. If its not portable, then:
+			// registers[0x0f] = registers[next_firstnib] & 1; // prefer this one because it is portable
+			// registers[secondnib] = (registers[next_firstnib] >> 1);
+			std::cout << std::format("\n8{:#03x}{:#03x}6", secondnib, next_firstnib);
 			break;
 		}
 		case 0x07:
