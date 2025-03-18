@@ -35,7 +35,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	uint8_t firstnib = (hex_value >> 4);
 	uint8_t secondnib = (hex_value << 4);
 	std::cout << std::format("\n{:#06x}  {:#04x}  {:#04x}", (pc), hex_value, hex_data[pc+1]);
-	std::cout << "\nFirst Nibble: " << std::format("{:#01x}\n", firstnib);
+	//std::cout << "\nFirst Nibble: " << std::format("{:#01x}\n", firstnib);
 
 
 	switch (firstnib)
@@ -82,14 +82,12 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	case 0x06: 
 	{
 		// 6XNN	Store number NN in register VX
-		// Pseudo: 
 		// registers[secondnib] = hex_data[pc+1];
 		break;
 	}
 	case 0x07: 
 	{
 		//7XNN:	Add the value NN to register VX
-		// Pseudo:
 		// registers[secondnib] += hex_data[pc+1]; 
 		break;
 	}

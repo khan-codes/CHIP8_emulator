@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <vector>
+#include <array>
 #include <stack>
 
 struct Clocks
@@ -14,16 +14,18 @@ struct Clocks
 
 namespace Capacities
 {
-	extern int memory_capacity;
-	extern int registers_capacity;
+	inline constexpr int memory_capacity = 4096;
+	inline constexpr int registers_capacity = 16;
 }
 
 namespace SystemPeripherals
 {
-	extern std::vector<uint8_t> memory;
-	extern std::vector<uint16_t> registers;
-	extern std::stack<uint16_t> stack;
-	extern Clocks clocks;
+	 inline std::array<uint8_t, Capacities::memory_capacity> memory;
+	 inline std::array<uint8_t, Capacities::registers_capacity> registers;
+	 inline uint16_t register_i = 0x00;
+	 inline uint16_t pc = 0x200;
+	 inline std::stack<uint16_t> stack;
+	 inline Clocks clocks{0, 0, false, false};
 }
 
 void start_delay_timer(Clocks&);
