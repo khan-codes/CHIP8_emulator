@@ -44,7 +44,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	case 0x01: 
 	{
 		// 1NNN: jump to instruction NNN
-		uint16_t nnn = ((hex_value << 4) << 8) | (hex_data[pc + 1]<<4);
+		uint16_t nnn = (secondnib << 8) | (hex_data[pc + 1]<<4);
 		// TODO: add 0x200 to the pc
 		pc = nnn;
 		std::cout << "\nnnn: " << std::format("{:#04x}\n", nnn);
@@ -53,7 +53,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	case 0x02: 
 	{
 		// 2NNN: Execute subroutine starting at address NNN
-		uint16_t nnn = ((hex_value << 4) << 8) | (hex_data[pc + 1]<<4);
+		uint16_t nnn = (secondnib << 8) | (hex_data[pc + 1]<<4);
 		std::cout << "\nnnn: " << std::format("{:#04x}\n", nnn);
 		// TODO: some stack operations required
 		break;
@@ -61,26 +61,22 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	case 0x03: 
 	{
 		// 3XNN: Skip the following instruction if the value of register VX equals NN
-		uint8_t register_x{};	// in the array of registers search for secondnib
-		if (register_x == hex_data[pc + 1])
-			pc += 2;
+		//if (registers[secondnib] != hex_data[pc + 1])
+			//pc += 2;
 		break;
 	}
 	case 0x04: 
 	{
 		// 4XNN	Skip the following instruction if the value of register VX is not equal to NN
-		uint8_t register_x{};  // in the array of registers search for secondnib
-		if (register_x != hex_data[pc + 1])
-			pc += 2;
+		//if (registers[secondnib] != hex_data[pc + 1])
+		//	pc += 2;
 		break;
 	}
 	case 0x05: 
 	{
 		// 5XY0	Skip the following instruction if the value of register VX is equal to the value of register VY
-		uint8_t register_x{};  // get the values of the resgister using the second nibble
-		uint8_t register_y{};
-		if (register_x == register_y)
-			pc += 2;
+		//if (registers[secondnib] == registers[(hex_data[pc+1] >> 4)])
+			//pc += 2;
 		break;
 	}
 	case 0x06: 
@@ -178,10 +174,9 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 	case 0x09: 
 	{
 		// 9XY0: Skip the following instruction if the value of register VX is not equal to the value of register VY
-		uint8_t register_x{};  // get the values of the resgister using the second nibble
-		uint8_t register_y{};
-		if (register_x != register_y)
-			pc += 2;
+		//if (registers[secondnib] != registers[(hex_data[pc+1] >> 4)])
+		//	pc += 2;
+		std::cout << std::format("\n9{:#03x}{:#03x}0", secondnib, (hex_data[pc+1] >> 4));
 		break;
 	}
 	case 0x0a: 
@@ -190,6 +185,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		// I is a special register, that is 2 bytes long (unlike the rest which are 1 byte long). It is used for memory (read & write) operations
 		uint16_t register_i = ((hex_value << 4) << 8) | (hex_data[pc + 1] << 4);
 		// TODO: assign this value to the actual register I
+		std::cout << std::format("\na{:#03x}", register_i);
 		break;
 	}
 	case 0x0b: 
@@ -207,7 +203,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<short> distrib(0, 255);
-		uint8_t register_x = static_cast<uint8_t>(distrib(gen)) & hex_data[pc+1];
+		//uint8_t registers[secondnib] = static_cast<uint8_t>(distrib(gen)) & hex_data[pc+1];
 		// registers[secondnib] = register_x;
 		break;
 	}
@@ -282,11 +278,21 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		case 0x55:
 		{
 			// FX55: Store the values of registers V0 to VX inclusive in memory starting at address I; I is set to I + X + 1 after operation²
+			//for (int v = 0; v < (int)secondnib + 1; ++v)
+			//{
+			//	memory[register_i] = registers[v];
+			//	register_i++;
+			//}
 			break;
 		}
 		case 0x65:
 		{
 			// FX65	Fill registers V0 to VX inclusive with the values stored in memory starting at address I; I is set to I + X + 1 after operation²
+			//for (int m = register_i, v = 0; m < (register_i + secondnib + 1), v < secondnib + 1; ++m, ++v)
+			//{
+					//registers[v] = memory[m];
+					//register_i = m;
+			//}
 			break;
 		}
 		}
