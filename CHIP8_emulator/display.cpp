@@ -2,8 +2,8 @@
 
 namespace display_constants
 {
-	extern int grid_width = 32;
-	extern int grid_height = 16;
+	extern int grid_width = 64;
+	extern int grid_height = 32;
 	extern int node_size = 5;
 	extern int screen_width = grid_width * node_size;
 	extern int screen_height = grid_height * node_size;

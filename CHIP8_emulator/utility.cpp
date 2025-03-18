@@ -3,6 +3,7 @@
 #include <iostream>
 #include <random>
 #include "utility.h"
+#include "system.h"
 
 std::vector<uint8_t> read_hex_file(const char* filepath)
 {
@@ -241,33 +242,30 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 		case 0x07:
 		{
 			// FX07: Store the current value of the delay timer in register VX
+			// registers[secondnib] = Clocks.delay_timer;
 			break;
 		}
 		case 0x0a:
 		{
 			// FX0A: Wait for a keypress and store the result in register VX
-			// Psuedo:
 			// registersp[secondnib] = get_key();
 			break;
 		}
 		case 0x15:
 		{
 			// FX15: Set the delay timer to the value of register VX
-			// Psuedo:
-			// delay_time = registers[secondnib]; 
+			// Clocks.delay_timer = registers[secondnib]; 
 			break;
 		}
 		case 0x18:
 		{
 			// FX18: Set the sound timer to the value of register VX
-			// Psuedo:
-			// delay_time = registers[secondnib]; 
+			// Clocks.sound_timer = registers[secondnib]; 
 			break;
 		}
 		case 0x1e:
 		{
 			// FX1E: Add the value stored in register VX to register I
-			// Pseudo: 
 			// register_i += registers[secondnib];
 			break;
 		}
@@ -299,9 +297,7 @@ void disassember(std::vector<uint8_t> &hex_data, int& pc)
 
 void traverse_rom(std::vector<uint8_t>& hex_data)
 {
-	// FIXME: only for debug. normally, i should start from 0.
-	//int i = 0;
-	int i = 2;
+	int i = 0;
 	while (i < hex_data.size())
 	{
 		disassember(hex_data, i);
